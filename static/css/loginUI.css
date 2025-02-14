@@ -177,3 +177,41 @@ span a:hover {
   opacity: 0.6;
   transition: opacity 0.3s ease-in-out;
 }
+
+.google-login-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    90deg,
+    #8ec5fc,
+    #ff6b6b
+  ); /* Light Sky Blue to Soft Red */
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 12px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+  margin: 10px auto;
+  border: none;
+  transition: background 0.3s ease-in-out;
+  gap: 10px;
+}
+
+.google-login-button:hover {
+  background: linear-gradient(
+    90deg,
+    #a6e4ff,
+    #ff8a80
+  ); /* Lighter Hover Effect */
+}
+
+.google-login-button img {
+  height: 26px;
+  width: 26px;
+  margin-top: -2.5%;
+}

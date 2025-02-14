@@ -5,12 +5,42 @@ import cv2
 from io import BytesIO
 from PIL import Image
 from auth import auth_bp
+from authlib.integrations.flask_client import OAuth
+from extensions import oauth  # Import OAuth from extensions.py
 
 #local imports
 from laplacian_edge_detector import conv2d  # Import the conv2d function
 from greyscale import apply_greyscale
 
 app = Flask(__name__)
+
+
+'''
+======================== Google OAuth Setups ============================
+'''
+
+oauth.init_app(app)
+
+
+
+# Configure Google OAuth
+google = oauth.register(
+    name='google',
+    client_id='334543306177-3go89o6a71iedphhdahab1mhd86spc1p.apps.googleusercontent.com',
+    client_secret='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',
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    access_token_url='https://oauth2.googleapis.com/token',
+    api_base_url='https://www.googleapis.com/oauth2/v3/',
+    jwks_uri='https://www.googleapis.com/oauth2/v3/certs',
+    client_kwargs={'scope': 'openid email profile'},
+    redirect_uri='http://127.0.0.1:5000/auth/callback'  # Ensure this matches Google Cloud Console
+)
+
+
+'''
+======================== Google OAuth Setups until here ============================
+'''
+
 
 
 @app.route('/')

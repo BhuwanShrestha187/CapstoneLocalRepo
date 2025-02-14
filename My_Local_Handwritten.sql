@@ -8,7 +8,9 @@ CREATE TABLE Users (
     id INT IDENTITY(1,1) PRIMARY KEY,
 	email NVARCHAR(100) UNIQUE NOT NULL,
     username NVARCHAR(50) UNIQUE NOT NULL,
-    password_hash VARBINARY(32) NOT NULL
+    password_hash VARBINARY(32) NOT NULL,
+	google_id VARCHAR(50) NULL, 
+	is_google_user BIT NOT NULL DEFAULT 0
 );
 GO
 
@@ -17,10 +19,11 @@ INSERT INTO Users (username, email, password_hash)
 VALUES ('Admin', 'admin@gmail.com', HASHBYTES('SHA2_256', 'password'));
 GO
 
+
+
 --List all the users
 SELECT * FROM Users;
-ALTER TABLE Users 
-ALTER COLUMN password_hash VARBINARY(32);
+
 SELECT username, email, password_hash FROM Users;
 
 DROP TABLE Users; 
