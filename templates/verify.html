@@ -1,0 +1,54 @@
+<!-- templates/verify.html -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Verify Your Account</title>
+        <link rel="stylesheet"
+            href="{{ url_for('static', filename='css/loginUI.css') }}">
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            crossorigin="anonymous" />
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="container main">
+                <div class="row">
+                    <div class="col-md-6 side-image">
+                        <img
+                            src="{{ url_for('static', filename='images/your_side_image.png') }}">
+                    </div>
+                    <div class="col-md-6 right">
+                        <div class="input-box">
+                            <header>Enter Verification Code</header>
+                            {% with messages =
+                            get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                            {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                            {% endwith %}
+
+                            <form action="{{ url_for('auth.verify') }}"
+                                method="POST">
+                                <div class="input-field">
+                                    <input type="text" class="input" name="code"
+                                        required>
+                                    <label for="code">Verification Code</label>
+                                </div>
+                                <div class="input-field">
+                                    <input type="submit" class="submit"
+                                        value="Verify">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

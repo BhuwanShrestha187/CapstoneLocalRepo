@@ -33,13 +33,14 @@
                     </div>
                     <button type="submit" class="upload-button">Upload</button>
                 </div>
-                {% if session['user'] %}
-                <div class="logout-container">
-                    <a href="{{ url_for('auth.logout') }}"
-                        class="logout-button">Logout</a>
-                </div>
-                {% endif %}
+
             </form>
+            {% if session['user'] %}
+            <div class="logout-container">
+                <a href="{{ url_for('auth.logout') }}"
+                    class="logout-button">Logout</a>
+            </div>
+            {% endif %}
         </div>
 
         <script>

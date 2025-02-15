@@ -1,6 +1,12 @@
 /* POPPINS FONT */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
+@media only screen and (max-width: 768px) {
+  .right {
+    width: 100%;
+  }
+}
+
 * {
   font-family: "Poppins", sans-serif;
 }
@@ -133,7 +139,12 @@ span a:hover {
 
 @media only screen and (max-width: 768px) {
   .side-image {
-    border-radius: 10px 10px 0 0;
+    border-radius: 10px 0 0 0px;
+    background-image: url("/static/images/logo.png"); /* Correct path */
+    height: 120px;
+    background-size: cover;
+
+    background-repeat: no-repeat;
   }
   img {
     width: 35px;
@@ -182,11 +193,7 @@ span a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-    90deg,
-    #8ec5fc,
-    #ff6b6b
-  ); /* Light Sky Blue to Soft Red */
+  background: linear-gradient(90deg, #8ec5fc, #ff6b6b);
   color: white;
   font-size: 16px;
   font-weight: bold;
@@ -199,7 +206,8 @@ span a:hover {
   margin: 10px auto;
   border: none;
   transition: background 0.3s ease-in-out;
-  gap: 10px;
+  gap: 10px; /* Add spacing between icon and text */
+  position: relative;
 }
 
 .google-login-button:hover {
@@ -213,5 +221,8 @@ span a:hover {
 .google-login-button img {
   height: 26px;
   width: 26px;
-  margin-top: -2.5%;
+  margin: 0; /* Remove extra margin */
+  position: relative;
+  top: 0;
+  left: 0px;
 }
