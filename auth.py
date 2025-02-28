@@ -256,12 +256,20 @@ def forgot_password():
 
     cursor = conn.cursor()
     try:
-        cursor.execute("SELECT id FROM Users WHERE email = ?", (email,))
+        # Check if email exists and its Google-only status
+        cursor.execute("SELECT id, is_google_user FROM Users WHERE email = ?", (email,))
         user_row = cursor.fetchone()
+
         if not user_row:
-            flash("Email not found in our records.", "error")
+            flash("Account associated with this email is not found in our records!!", "danger")
             return redirect(url_for('auth.forgot_password_page'))
 
+        is_google_only = user_row.is_google_user
+        if is_google_only:
+            flash("Error sending the verification link. This account is created using Google login.", "danger")
+            return redirect(url_for('auth.forgot_password_page'))
+
+        # If not Google-only, proceed with sending verification code
         verification_code = str(random.randint(100000, 999999))
         session['forgot_password_data'] = {
             'email': email,
@@ -282,6 +290,7 @@ Your verification code is: {verification_code}
 
 Please enter this code on the verification page to reset your password.
 """
+
             context = ssl.create_default_context()
             with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
                 server.login(sender_email, sender_password)
