@@ -27,6 +27,7 @@ SELECT * FROM Users;
 SELECT username, email, password_hash FROM Users;
 
 DROP TABLE Users; 
+SELECT password_hash FROM Users WHERE email = 'admin@gmail.com';
 
 
 

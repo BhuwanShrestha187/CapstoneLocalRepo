@@ -3,4 +3,4 @@
 3. Up until now Login with Google is working.
 4. Next work on Sign Up funtionality.
 5. Sign Up functionality is complete as well
-6.
+6. Now Forgot password functionality

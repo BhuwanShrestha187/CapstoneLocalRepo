@@ -116,6 +116,12 @@ def login():
 
         # If is_google_only == 0, we proceed with normal password check
         stored_hash = user_row.password_hash
+        if isinstance(stored_hash, bytes):
+            stored_hash = stored_hash.decode('utf-8', errors='ignore')
+
+        print(f"Entered Hash: {hashed_password}")
+        print(f"Stored Hash: {stored_hash}")
+
         # Compare `stored_hash` with the hash of `password`
         # e.g.:
         import hashlib
@@ -280,6 +286,163 @@ def verify():
     finally:
         cursor.close()
         conn.close()
+
+
+
+'''=========================== Forgot Password Route ============================'''
+@auth_bp.route('/forgot_password_page', methods=['GET'])
+def forgot_password_page():
+    return render_template('forgot_password.html')
+
+
+@auth_bp.route('/forgot_password', methods=['POST'])
+def forgot_password():
+    email = request.form.get('email')
+    if not email:
+        flash("Email is required.", "error")
+        return redirect(url_for('auth.forgot_password_page'))
+
+    conn = get_db_connection()
+    if conn is None:
+        flash("Database connection failed", "error")
+        return redirect(url_for('auth.forgot_password_page'))
+
+    cursor = conn.cursor()
+    try:
+        # Check if email exists
+        cursor.execute("SELECT id FROM Users WHERE email = ?", (email,))
+        user_row = cursor.fetchone()
+        if not user_row:
+            flash("Email not found in our records.", "error")
+            return redirect(url_for('auth.forgot_password_page'))
+
+        # Generate a verification code
+        verification_code = str(random.randint(100000, 999999))
+
+        # Store data in session for the next step
+        session['forgot_password_data'] = {
+            'email': email,
+            'verification_code': verification_code
+        }
+
+        # Send code via email (similar to your signup flow)
+        try:
+            sender_email = "ayanshrestha187@gmail.com"
+            sender_password = "szrx ltkh ksgx ynri"  # Your Gmail App Password
+            receiver_email = email
+
+            message = f"""\
+Subject: Password Reset Verification Code
+
+Hello,
+
+Your verification code is: {verification_code}
+
+Please enter this code on the verification page to reset your password.
+"""
+
+            context = ssl.create_default_context()
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+                server.login(sender_email, sender_password)
+                server.sendmail(sender_email, receiver_email, message)
+
+            flash("Verification code has been sent to your email.", "success")
+            return redirect(url_for('auth.forgot_password_verify_page'))
+
+        except Exception as e:
+            print(f"Error sending verification email: {e}")
+            flash("Failed to send verification code. Please try again.", "error")
+            return redirect(url_for('auth.forgot_password_page'))
+
+    except Exception as e:
+        flash("An error occurred. Please try again.", "error")
+        print(f"Forgot Password Error: {e}")
+        return redirect(url_for('auth.forgot_password_page'))
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@auth_bp.route('/forgot_password_verify_page', methods=['GET'])
+def forgot_password_verify_page():
+    return render_template('forgot_password_verify.html')
+
+
+@auth_bp.route('/forgot_password_verify', methods=['POST'])
+def forgot_password_verify():
+    input_code = request.form.get('code')
+    forgot_data = session.get('forgot_password_data')
+
+    if not forgot_data:
+        flash("Session expired or invalid. Please try again.", "error")
+        return redirect(url_for('auth.forgot_password_page'))
+
+    if input_code != forgot_data.get('verification_code'):
+        flash("Invalid verification code. Please try again.", "error")
+        return redirect(url_for('auth.forgot_password_verify_page'))
+
+    # If code is correct, proceed to reset password
+    flash("Verification successful! Please set a new password.", "success")
+    return redirect(url_for('auth.reset_password_page'))
+
+
+@auth_bp.route('/reset_password_page', methods=['GET'])
+def reset_password_page():
+    # Just render the page that asks for the new password & confirm password
+    return render_template('reset_password.html')
+
+
+@auth_bp.route('/reset_password', methods=['POST'])
+def reset_password():
+    forgot_data = session.get('forgot_password_data')
+    if not forgot_data:
+        flash("Session expired or invalid. Please try again.", "error")
+        return redirect(url_for('auth.forgot_password_page'))
+
+    new_password = request.form.get('new_password')
+    confirm_password = request.form.get('confirm_password')
+
+    if not new_password or not confirm_password:
+        flash("Please fill all password fields.", "error")
+        return redirect(url_for('auth.reset_password_page'))
+
+    if new_password != confirm_password:
+        flash("Passwords do not match. Please try again.", "error")
+        return redirect(url_for('auth.reset_password_page'))
+
+    # Hash the new password
+    new_password_hash = hash_password(new_password)
+
+    conn = get_db_connection()
+    if conn is None:
+        flash("Database connection failed", "error")
+        return redirect(url_for('auth.reset_password_page'))
+
+    cursor = conn.cursor()
+    try:
+        email = forgot_data.get('email')
+        update_query = """
+            UPDATE Users
+            SET password_hash = ?
+            WHERE email = ?
+        """
+        cursor.execute(update_query, (new_password_hash, email))
+        conn.commit()
+
+        # Clear session data for forgot password
+        session.pop('forgot_password_data', None)
+
+        flash("Your password has been reset successfully!", "success")
+        return redirect(url_for('home'))
+
+    except Exception as e:
+        flash("An error occurred while updating the password.", "error")
+        print(f"Reset Password Error: {e}")
+        return redirect(url_for('auth.reset_password_page'))
+    finally:
+        cursor.close()
+        conn.close()
+
 
 
         
