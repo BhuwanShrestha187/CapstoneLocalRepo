@@ -46,8 +46,10 @@ google = oauth.register(
 @app.route('/')
 def home():
     if 'user' in session:
-        return render_template("base.html")  # Redirect logged-in users to base.html
-    return render_template("login.html")  # Show login page for guests
+        return render_template("base.html")
+    # Pass email if it exists, otherwise None
+    email = request.args.get('email')  # Optional: if email is passed via GET
+    return render_template("login.html", email=email)
 
 
 # Filters for calculating Laplacian

@@ -8,15 +8,15 @@ CREATE TABLE Users (
     id INT IDENTITY(1,1) PRIMARY KEY,
 	email NVARCHAR(100) UNIQUE NOT NULL,
     username NVARCHAR(50) UNIQUE NOT NULL,
-    password_hash NVARCHAR(256) NULL,
+    password_hash VARBINARY(256) NULL,
 	google_id VARCHAR(50) NULL, 
 	is_google_user BIT NOT NULL DEFAULT 0
 );
 GO
 
 -- Insert a test user (Password: 'test123' hashed using SHA2_256)
-INSERT INTO Users (username, email, password_hash)
-VALUES ('Admin', 'admin@gmail.com', HASHBYTES('SHA2_256', 'password'));
+INSERT INTO Users (username, email, password_hash, is_google_user)
+VALUES ('Admin', 'admin@gmail.com', 0x243262243132244b58385838583858385838583858385838583858385838583858385838583858385838583858385838583858385838583858, 0);
 GO
 
 

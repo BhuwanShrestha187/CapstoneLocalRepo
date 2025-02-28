@@ -38,19 +38,18 @@
                             {% endwith %}
 
                             <!-- Login Form -->
+                            <!-- Login Form -->
                             <form action="{{ url_for('auth.login') }}"
                                 method="post">
                                 <div class="input-field">
                                     <input type="email" class="input" id="email"
-                                        name="email" required
-                                        autocomplete="off"
-                                        value="admin@gmail.com">
+                                        name="email" required autocomplete="off"
+                                        value="{{ email if email else '' }}">
                                     <label for="email">Email</label>
                                 </div>
                                 <div class="input-field password-container">
                                     <input type="password" class="input"
-                                        id="pass" name="password" required
-                                        value="password">
+                                        id="pass" name="password" required>
                                     <label for="pass">Password</label>
                                     <span class="toggle-password"
                                         onclick="togglePassword()">
@@ -71,7 +70,6 @@
                                         <span>Log In with Google</span>
                                     </a>
                                 </div>
-
                             </form>
 
                             <div class="signin">
